@@ -1,0 +1,180 @@
+import type { OrnamentId, OrnamentMeta } from '../types/card';
+
+export const ORNAMENT_CATALOG: OrnamentMeta[] = [
+  {
+    id: 'espresso-martini',
+    label: 'Espresso Martini',
+    shortLabel: 'Martini',
+    accentHex: '#6c422c',
+    hint: 'Coupe glass with crema & 3 espresso beans',
+  },
+  {
+    id: 'kirby',
+    label: 'Kirby',
+    shortLabel: 'Kirby',
+    accentHex: '#ff96be',
+    hint: 'Round coral puffball with berry shoes',
+  },
+  {
+    id: 'rubber-duck',
+    label: 'Rubber Duck',
+    shortLabel: 'Duck',
+    accentHex: '#ffd84d',
+    hint: 'Sunny bath ducky wearing a mini Santa cap',
+  },
+  {
+    id: 'cinnamoroll',
+    label: 'Cinnamoroll',
+    shortLabel: 'Cinnamoroll',
+    accentHex: '#92c7f2',
+    hint: 'Floppy white cloud pup with cinnamon tail',
+  },
+  {
+    id: 'lord-farquaad',
+    label: 'Lord Farquaad',
+    shortLabel: 'Farquaad',
+    accentHex: '#c82934',
+    hint: 'Sharp black bob, red velvet cape & crown',
+  },
+  {
+    id: 'french-fries',
+    label: 'French Fries',
+    shortLabel: 'Fries',
+    accentHex: '#d4333d',
+    hint: 'Holly-red carton packed with golden fries',
+  },
+  {
+    id: 'kiwi',
+    label: 'Kiwi Slice',
+    shortLabel: 'Kiwi',
+    accentHex: '#7ad446',
+    hint: 'Sliced emerald kiwi fruit with black seeds',
+  },
+  {
+    id: 'empanada',
+    label: 'Empanada',
+    shortLabel: 'Empanada',
+    accentHex: '#e6a84c',
+    hint: 'Golden crescent pastry with crimped edge',
+  },
+  {
+    id: 'volleyball',
+    label: 'Volleyball',
+    shortLabel: 'Volleyball',
+    accentHex: '#e8b948',
+    hint: 'Red, green, gold & snowy white match ball',
+  },
+  {
+    id: 'cat',
+    label: 'Cat',
+    shortLabel: 'Cat',
+    accentHex: '#f4a965',
+    hint: 'Plump ginger-cream kitty with jingle collar',
+  },
+  {
+    id: 'dog',
+    label: 'Dog',
+    shortLabel: 'Dog',
+    accentHex: '#e4b373',
+    hint: 'Golden puppy wearing an evergreen scarf',
+  },
+  {
+    id: 'wallet',
+    label: 'Wallet',
+    shortLabel: 'Wallet',
+    accentHex: '#8d5738',
+    hint: 'Leather bifold with gold stitch & bills',
+  },
+  {
+    id: 'laptop',
+    label: 'Laptop',
+    shortLabel: 'Laptop',
+    accentHex: '#7c96b2',
+    hint: 'Silver open laptop with cozy holiday screen',
+  },
+  {
+    id: 'daisy',
+    label: 'Daisy',
+    shortLabel: 'Daisy',
+    accentHex: '#f4c84b',
+    hint: 'Snow-white daisy bloom with sunny center',
+  },
+  {
+    id: 'hamster',
+    label: 'Hamster',
+    shortLabel: 'Hamster',
+    accentHex: '#e8aa6e',
+    hint: 'Chubby caramel hamster with stuffed cheeks',
+  },
+  {
+    id: 'fish',
+    label: 'Fish',
+    shortLabel: 'Fish',
+    accentHex: '#ff8a54',
+    hint: 'Painterly coral & white striped goldfish',
+  },
+  {
+    id: 'eiffel-tower',
+    label: 'Eiffel Tower',
+    shortLabel: 'Eiffel',
+    accentHex: '#c89b42',
+    hint: 'Sculpted Parisian iron tower in antique bronze-gold',
+  },
+  {
+    id: 'mistletoe',
+    label: 'Mistletoe',
+    shortLabel: 'Mistletoe',
+    accentHex: '#3f8c5c',
+    hint: 'Festive sage sprig with red bow & berries',
+  },
+  {
+    id: 'tequila-bottle',
+    label: 'Tequila Bottle',
+    shortLabel: 'Tequila',
+    accentHex: '#6ca86a',
+    hint: 'Artisanal agave bottle with lime & cork',
+  },
+  {
+    id: 'film-slate',
+    label: 'Movie Film Slate',
+    shortLabel: 'Film Slate',
+    accentHex: '#2c3342',
+    hint: 'Director clapperboard slate with festive chalk lines',
+  },
+  {
+    id: 'honey-bee',
+    label: 'Honey Bee',
+    shortLabel: 'Honey Bee',
+    accentHex: '#f5ca45',
+    hint: 'Fuzzy striped bumblebee with pearl wings',
+  },
+  {
+    id: 'acrylic-paint',
+    label: 'Baby Pink Paint',
+    shortLabel: 'Pink Paint',
+    accentHex: '#ffadc8',
+    hint: 'Baby-pink acrylic paint tube & swirl',
+  },
+  {
+    id: 'pizza-slice',
+    label: 'Pizza Slice',
+    shortLabel: 'Pizza',
+    accentHex: '#ee9b38',
+    hint: 'Melted mozzarella & pepperoni slice with golden crust',
+  },
+  {
+    id: 'banana',
+    label: 'Banana',
+    shortLabel: 'Banana',
+    accentHex: '#f6d63b',
+    hint: 'Sunny curved ripe yellow banana',
+  },
+];
+
+export const ORNAMENT_BY_ID: Record<OrnamentId, OrnamentMeta> = ORNAMENT_CATALOG.reduce(
+  (acc, item) => {
+    acc[item.id] = item;
+    return acc;
+  },
+  {} as Record<OrnamentId, OrnamentMeta>
+);

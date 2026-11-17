@@ -1,0 +1,8 @@
+node_modules
+dist
+*.tsbuildinfo
+.DS_Store
+scratch*
+verify_*.mjs
+*.png
+!public/og-card.png
