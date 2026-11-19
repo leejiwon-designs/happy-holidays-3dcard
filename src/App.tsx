@@ -175,6 +175,7 @@ export function App() {
         if (key === '1') handleSelectCity('toronto');
         else if (key === '2') handleSelectCity('seoul');
         else if (key === '3') handleSelectCity('vancouver');
+        else if (key === '4') handleSelectCity('brussels');
         else if (key === 't') setTrayOpen((prev) => !prev);
       }
       if (key === 'm') handleToggleSound();

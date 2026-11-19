@@ -9,6 +9,14 @@ import {
 } from './paperArtwork';
 import {
   createPaperCutLayer,
+  drawBrusselsAtomiumCutout,
+  drawBrusselsBeerAndFritesCutout,
+  drawBrusselsFrontBeerAndFriesProp,
+  drawBrusselsFrontWaffleProp,
+  drawBrusselsGrandPlaceBackdrop,
+  drawBrusselsGuildhallCutout,
+  drawBrusselsSpottedCatCutout,
+  drawBrusselsWaffleStandCutout,
   drawGastownSteamClockCutout,
   drawGwanghwamunChristmasCutout,
   drawLionsGateBridgeCutout,
@@ -61,8 +69,20 @@ export interface AnimatedCityElements {
   streetcar?: THREE.Group;
   seaplane?: THREE.Group;
   magpie?: THREE.Group;
+  brusselsCat?: THREE.Group;
   swayGroup?: THREE.Group;
   steamPuffs?: SteamPuffParticle[];
+}
+
+interface BrusselsCatRoam {
+  x: number;
+  z: number;
+  targetX: number;
+  targetZ: number;
+  speed: number;
+  pauseTimer: number;
+  stepPhase: number;
+  facingRight: boolean;
 }
 
 interface CoverBowRuntime {
@@ -94,6 +114,7 @@ export class CardDiorama {
   private openMix = 0;
   private lastAnimTime = 0;
   private nextSteamBurstAt = 0.2;
+  private catRoam: BrusselsCatRoam | null = null;
 
   constructor() {
     this.root.add(this.deckGroup);
@@ -346,6 +367,8 @@ export class CardDiorama {
       this.buildSeoulPaperCuts(theme);
     } else if (cityId === 'toronto') {
       this.buildTorontoPaperCuts(theme);
+    } else if (cityId === 'brussels') {
+      this.buildBrusselsPaperCuts(theme);
     } else {
       this.buildVancouverPaperCuts(theme);
     }
@@ -529,8 +552,74 @@ export class CardDiorama {
       this.animated.magpie.rotation.z = Math.sin(simTime * 3.8) * 0.1;
     }
 
+    // Brussels: Black & white spotted cat ambles slowly and randomly across the Grand Place courtyard
+    if (this.animated.brusselsCat && this.catRoam) {
+      const cat = this.catRoam;
+      if (cat.pauseTimer > 0) {
+        cat.pauseTimer = Math.max(0, cat.pauseTimer - dt);
+        this.animated.brusselsCat.position.set(cat.x, 0.01, cat.z);
+        this.animated.brusselsCat.rotation.z = Math.sin(simTime * 1.4) * 0.018;
+      } else {
+        const toX = cat.targetX - cat.x;
+        const toZ = cat.targetZ - cat.z;
+        const dist = Math.hypot(toX, toZ);
+        if (dist < 0.04) {
+          cat.pauseTimer = 0.85 + Math.random() * 2.15;
+          this.pickNextCatTarget(cat);
+          this.animated.brusselsCat.position.set(cat.x, 0.01, cat.z);
+          this.animated.brusselsCat.rotation.z = 0;
+        } else {
+          const step = Math.min(dist, cat.speed * dt);
+          const stepX = (toX / dist) * step;
+          const stepZ = (toZ / dist) * step;
+          cat.x += stepX;
+          cat.z += stepZ;
+
+          // Steer cleanly around curved lower tree branches (center 0, 1.56, r = 1.14)
+          const tzOff = cat.z - 1.56;
+          const treeDist = Math.hypot(cat.x, tzOff);
+          if (treeDist < 1.3) {
+            const safeDist = Math.max(0.001, treeDist);
+            cat.x = (cat.x / safeDist) * 1.3;
+            cat.z = 1.56 + (tzOff / safeDist) * 1.3;
+          }
+          cat.x = THREE.MathUtils.clamp(cat.x, -1.38, 1.38);
+          cat.z = THREE.MathUtils.clamp(cat.z, 2.46, 3.04);
+
+          if (Math.abs(stepX) > 0.0004) {
+            cat.facingRight = stepX > 0;
+          }
+          cat.stepPhase += dt * (cat.speed * 13.0);
+          const hop = Math.abs(Math.sin(cat.stepPhase)) * 0.022;
+          this.animated.brusselsCat.position.set(cat.x, 0.01 + hop, cat.z);
+          this.animated.brusselsCat.rotation.y = cat.facingRight ? 0.2 : Math.PI - 0.2;
+          this.animated.brusselsCat.rotation.z = Math.sin(cat.stepPhase) * 0.032;
+        }
+      }
+    }
+
     if (this.animated.swayGroup) {
       this.animated.swayGroup.rotation.z = Math.sin(simTime * 1.5) * 0.022;
+    }
+  }
+
+  private pickNextCatTarget(cat: BrusselsCatRoam): void {
+    for (let attempt = 0; attempt < 16; attempt++) {
+      let tx = (Math.random() * 2 - 1) * 1.36;
+      let tz = 2.48 + Math.random() * 0.56;
+      const dz = tz - 1.56;
+      const d = Math.hypot(tx, dz);
+      if (d < 1.32) {
+        const s = 1.34 / Math.max(0.001, d);
+        tx = THREE.MathUtils.clamp(tx * s, -1.36, 1.36);
+        tz = THREE.MathUtils.clamp(1.56 + dz * s, 2.48, 3.04);
+      }
+      if (Math.hypot(tx - cat.x, tz - cat.z) >= 0.52 || attempt === 15) {
+        cat.targetX = tx;
+        cat.targetZ = tz;
+        cat.speed = 0.16 + Math.random() * 0.16;
+        return;
+      }
     }
   }
 
@@ -798,6 +887,77 @@ export class CardDiorama {
     );
   }
 
+  private buildBrusselsPaperCuts(theme: (typeof CITY_THEMES)['brussels']): void {
+    const t = this.trackTex.bind(this);
+    const m = this.trackMat.bind(this);
+
+    const grandPlace = createPaperCutLayer(
+      { width: 5.5, height: 3.35, pxWidth: 960, pxHeight: 620, borderPx: 7, paperColor: theme.cardPaper },
+      (ctx, w, h) => drawBrusselsGrandPlaceBackdrop(ctx, w, h, theme),
+      t,
+      m
+    );
+    this.addCutout(grandPlace, 0, 0, 0.28, 0, 0.0);
+
+    const atomium = createPaperCutLayer(
+      { width: 1.74, height: 2.66, pxWidth: 460, pxHeight: 700, borderPx: 6, paperColor: theme.cardPaper },
+      (ctx, w, h) => drawBrusselsAtomiumCutout(ctx, w, h, theme),
+      t,
+      m
+    );
+    this.addCutout(atomium, -2.18, 0, 0.72, 0.16, 0.06);
+
+    const guildhall = createPaperCutLayer(
+      { width: 1.86, height: 2.15, pxWidth: 520, pxHeight: 580, borderPx: 6, paperColor: theme.cardPaper },
+      (ctx, w, h) => drawBrusselsGuildhallCutout(ctx, w, h, theme),
+      t,
+      m
+    );
+    this.addCutout(guildhall, 2.08, 0, 0.94, -0.22, 0.08);
+
+    const beerFritesStand = createPaperCutLayer(
+      { width: 1.44, height: 1.18, pxWidth: 420, pxHeight: 350, borderPx: 5, paperColor: theme.cardPaper },
+      (ctx, w, h) => drawBrusselsBeerAndFritesCutout(ctx, w, h, theme),
+      t,
+      m
+    );
+    this.addCutout(beerFritesStand, -2.06, 0, 2.22, 0.24, 0.14);
+
+    const waffleStand = createPaperCutLayer(
+      { width: 1.44, height: 1.15, pxWidth: 420, pxHeight: 340, borderPx: 5, paperColor: theme.cardPaper },
+      (ctx, w, h) => drawBrusselsWaffleStandCutout(ctx, w, h, theme),
+      t,
+      m
+    );
+    this.addCutout(waffleStand, 2.06, 0, 2.22, -0.24, 0.16);
+
+    const cat = createPaperCutLayer(
+      { width: 0.78, height: 0.92, pxWidth: 320, pxHeight: 380, borderPx: 5, paperColor: theme.cardPaper, depth: 0.028 },
+      (ctx, w, h) => drawBrusselsSpottedCatCutout(ctx, w, h, theme),
+      t,
+      m
+    );
+    this.addCutout(cat, 0, 0.01, 2.94, 0.2, 0.18);
+    this.animated.brusselsCat = cat;
+    this.catRoam = {
+      x: 0,
+      z: 2.94,
+      targetX: 0,
+      targetZ: 2.94,
+      speed: 0.22,
+      pauseTimer: 0.35,
+      stepPhase: 0,
+      facingRight: true,
+    };
+    this.pickNextCatTarget(this.catRoam);
+
+    this.mountForegroundProps(
+      theme.cardPaper,
+      (ctx, w, h) => drawBrusselsFrontBeerAndFriesProp(ctx, w, h, theme),
+      (ctx, w, h) => drawBrusselsFrontWaffleProp(ctx, w, h, theme)
+    );
+  }
+
   private mountForegroundProps(
     paperColor: string,
     leftDraw: (ctx: CanvasRenderingContext2D, w: number, h: number) => void,
@@ -841,6 +1001,8 @@ export class CardDiorama {
     this.animated.streetcar = undefined;
     this.animated.seaplane = undefined;
     this.animated.magpie = undefined;
+    this.animated.brusselsCat = undefined;
+    this.catRoam = null;
     this.animated.swayGroup = undefined;
     this.animated.steamPuffs = undefined;
 
@@ -865,3 +1027,7 @@ export class CardDiorama {
     this.clearDynamicScene();
   }
 }
+
+(import.meta as unknown as { hot?: { accept: (cb: () => void) => void } }).hot?.accept(() => {
+  window.location.reload();
+});

@@ -2168,3 +2168,1060 @@ export function drawVancouverBouldersCutout(
   ctx.fillStyle = theme.goldAccent;
   ctx.fillRect(cx + 20, h - 122, 18, 15);
 }
+
+/* ==================== BRUSSELS PAPER-CUT ARTWORK ==================== */
+
+export function drawBrusselsGrandPlaceBackdrop(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  theme: CityTheme
+) {
+  const baseY = h - 18;
+  const sx = w / 960;
+  const sy = h / 620;
+  const X = (v: number) => v * sx;
+  const Y = (v: number) => v * sy;
+
+  // Shared helper for glowing arched Gothic/Baroque Grand Place windows
+  const drawArchedWindow = (wx: number, wy: number, ww: number, wh: number, lit = true) => {
+    ctx.fillStyle = lit ? '#ffe694' : '#3a4668';
+    ctx.beginPath();
+    ctx.moveTo(wx, wy + wh);
+    ctx.lineTo(wx, wy + ww * 0.5);
+    ctx.arc(wx + ww * 0.5, wy + ww * 0.5, ww * 0.5, Math.PI, 0);
+    ctx.lineTo(wx + ww, wy + wh);
+    ctx.closePath();
+    ctx.fill();
+
+    if (lit) {
+      ctx.strokeStyle = 'rgba(130, 88, 34, 0.45)';
+      ctx.lineWidth = Math.max(1, 1.4 * sx);
+      ctx.beginPath();
+      ctx.moveTo(wx + ww * 0.5, wy + 2 * sy);
+      ctx.lineTo(wx + ww * 0.5, wy + wh);
+      ctx.moveTo(wx + 1 * sx, wy + wh * 0.55);
+      ctx.lineTo(wx + ww - 1 * sx, wy + wh * 0.55);
+      ctx.stroke();
+    }
+  };
+
+  // 1. Center low Grand Place snow-covered winter rooflines (tucked low behind center tree)
+  const centerRoofs: Array<[number, number, number, string, string]> = [
+    [296, 84, 210, '#7c6b66', '#4a3d49'],
+    [382, 82, 192, '#8d7b6c', '#534552'],
+    [466, 86, 184, '#6e6678', '#423c52'],
+    [554, 88, 206, '#846f68', '#4d3e48'],
+  ];
+  centerRoofs.forEach(([rx, rw, rh, wallCol, roofCol]) => {
+    const px = X(rx);
+    const pw = X(rw);
+    const py = baseY - Y(rh);
+    ctx.fillStyle = wallCol;
+    ctx.fillRect(px, py + Y(44), pw, Y(rh - 44));
+    ctx.fillStyle = roofCol;
+    ctx.beginPath();
+    ctx.moveTo(px - X(2), py + Y(44));
+    ctx.lineTo(px + pw * 0.5, py);
+    ctx.lineTo(px + pw + X(2), py + Y(44));
+    ctx.closePath();
+    ctx.fill();
+    // Snow slope & golden trim
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.moveTo(px - X(2), py + Y(44));
+    ctx.lineTo(px + pw * 0.5, py);
+    ctx.lineTo(px + pw * 0.65, py + Y(15));
+    ctx.lineTo(px + X(10), py + Y(44));
+    ctx.closePath();
+    ctx.fill();
+    for (let c = 0; c < 3; c++) {
+      drawArchedWindow(px + pw * (0.16 + c * 0.28), py + Y(64), pw * 0.16, Y(32), true);
+    }
+  });
+
+  // 2. Left Grand Place Centerpiece: Hôtel de Ville (Brussels Town Hall Gothic Belfry Spire)
+  const thX = X(54);
+  const thW = X(242);
+  const thBodyH = Y(190);
+  const thY = baseY - thBodyH;
+
+  // Limestone Gothic body + ground arcade
+  ctx.fillStyle = '#e7dcc5';
+  ctx.fillRect(thX, thY, thW, thBodyH);
+  ctx.fillStyle = '#d3c4a6';
+  ctx.fillRect(thX + thW - X(28), thY, X(28), thBodyH);
+
+  // Steep slate Gothic roof with twin stone dormer pinnacles & snow cap
+  ctx.fillStyle = '#3d4c6b';
+  ctx.beginPath();
+  ctx.moveTo(thX - X(4), thY);
+  ctx.lineTo(thX + thW * 0.5, thY - Y(58));
+  ctx.lineTo(thX + thW + X(4), thY);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.moveTo(thX - X(4), thY);
+  ctx.lineTo(thX + thW * 0.5, thY - Y(58));
+  ctx.lineTo(thX + thW * 0.44, thY - Y(38));
+  ctx.lineTo(thX + X(14), thY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Corner turrets with pointed conical roofs & gold finials
+  [thX + X(8), thX + thW - X(24)].forEach((tx) => {
+    ctx.fillStyle = '#dfd0b3';
+    ctx.fillRect(tx, thY - Y(38), X(16), Y(42));
+    ctx.fillStyle = '#3d4c6b';
+    ctx.beginPath();
+    ctx.moveTo(tx - X(3), thY - Y(38));
+    ctx.lineTo(tx + X(8), thY - Y(76));
+    ctx.lineTo(tx + X(19), thY - Y(38));
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = theme.goldAccent;
+    ctx.beginPath();
+    ctx.arc(tx + X(8), thY - Y(80), X(4), 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Iconic Flamboyant Gothic Belfry Spire rising cleanly inside canvas top margin
+  const spCx = thX + thW * 0.49;
+  const spBot = thY - Y(14);
+  ctx.fillStyle = '#efe5cf';
+  ctx.fillRect(spCx - X(24), spBot - Y(112), X(48), Y(112));
+  ctx.fillStyle = '#d3c4a6';
+  ctx.fillRect(spCx + X(10), spBot - Y(112), X(14), Y(112));
+  drawArchedWindow(spCx - X(13), spBot - Y(96), X(11), Y(42), true);
+  drawArchedWindow(spCx + X(2), spBot - Y(96), X(11), Y(42), true);
+
+  ctx.fillStyle = '#e7dcc5';
+  ctx.fillRect(spCx - X(17), spBot - Y(182), X(34), Y(70));
+  ctx.fillStyle = theme.goldAccent;
+  ctx.fillRect(spCx - X(26), spBot - Y(115), X(52), Y(5));
+  ctx.fillRect(spCx - X(19), spBot - Y(184), X(38), Y(5));
+
+  ctx.fillStyle = '#f2e8d4';
+  ctx.beginPath();
+  ctx.moveTo(spCx - X(15), spBot - Y(182));
+  ctx.lineTo(spCx, spBot - Y(296));
+  ctx.lineTo(spCx + X(15), spBot - Y(182));
+  ctx.closePath();
+  ctx.fill();
+
+  // Golden St. Michael weathervane pinnacle
+  ctx.fillStyle = theme.goldAccent;
+  ctx.fillRect(spCx - X(1.8), spBot - Y(322), X(3.6), Y(26));
+  ctx.beginPath();
+  ctx.arc(spCx, spBot - Y(326), X(6.5), 0, Math.PI * 2);
+  ctx.fill();
+
+  // Town Hall arched arcade & lancet facade rows
+  ctx.fillStyle = '#cbb792';
+  ctx.fillRect(thX, thY, thW, Y(7));
+  for (let c = 0; c < 6; c++) {
+    const gx = thX + X(14) + c * X(36);
+    drawArchedWindow(gx, thY + Y(18), X(22), Y(42), true);
+    drawArchedWindow(gx, thY + Y(72), X(22), Y(42), true);
+    ctx.fillStyle = '#534538';
+    ctx.beginPath();
+    ctx.moveTo(gx, baseY);
+    ctx.lineTo(gx, baseY - Y(40));
+    ctx.arc(gx + X(11), baseY - Y(40), X(11), Math.PI, 0);
+    ctx.lineTo(gx + X(22), baseY);
+    ctx.closePath();
+    ctx.fill();
+  }
+  drawWreath(ctx, spCx, thY + Y(126), X(15), theme.greenAccent, theme.redAccent, theme.goldAccent);
+
+  // 3. Right Grand Place Block: Maison du Roi (Broodhuis) & Gilded Gables
+  const mrX = X(642);
+  const mrW = X(264);
+  const mrBodyH = Y(258);
+  const mrY = baseY - mrBodyH;
+
+  ctx.fillStyle = '#d8cbb3';
+  ctx.fillRect(mrX, mrY, mrW, mrBodyH);
+  ctx.fillStyle = '#beaf94';
+  ctx.fillRect(mrX + mrW - X(24), mrY, X(24), mrBodyH);
+
+  // Ornate gilded Baroque frieze bands & balconies
+  ctx.fillStyle = theme.goldAccent;
+  ctx.fillRect(mrX, mrY, mrW, Y(6));
+  ctx.fillRect(mrX, mrY + Y(96), mrW, Y(6));
+  ctx.fillRect(mrX, mrY + Y(182), mrW, Y(5));
+
+  // Steep dark slate Flemish roof with three gilded triangular gable peaks & central lantern turret
+  ctx.fillStyle = '#374666';
+  ctx.fillRect(mrX + X(6), mrY - Y(62), mrW - X(12), Y(62));
+
+  [mrX + X(44), mrX + mrW * 0.5, mrX + mrW - X(44)].forEach((gx, idx) => {
+    const gw = idx === 1 ? X(58) : X(42);
+    const gh = idx === 1 ? Y(108) : Y(74);
+    ctx.fillStyle = '#e8dcc4';
+    ctx.beginPath();
+    ctx.moveTo(gx - gw * 0.5, mrY);
+    ctx.lineTo(gx, mrY - gh);
+    ctx.lineTo(gx + gw * 0.5, mrY);
+    ctx.closePath();
+    ctx.fill();
+
+    // Gold pediment border & finial
+    ctx.strokeStyle = theme.goldAccent;
+    ctx.lineWidth = Math.max(1.5, 2.8 * sx);
+    ctx.stroke();
+    ctx.fillStyle = theme.goldAccent;
+    ctx.beginPath();
+    ctx.arc(gx, mrY - gh - Y(5), X(5), 0, Math.PI * 2);
+    ctx.fill();
+
+    drawArchedWindow(gx - X(8), mrY - gh * 0.52, X(16), gh * 0.42, true);
+  });
+
+  // Maison du Roi central gilded copper belfry lantern & snow caps
+  const mrSpX = mrX + mrW * 0.5;
+  ctx.fillStyle = '#374666';
+  ctx.fillRect(mrSpX - X(14), mrY - Y(176), X(28), Y(76));
+  ctx.fillStyle = theme.goldAccent;
+  ctx.beginPath();
+  ctx.moveTo(mrSpX - X(17), mrY - Y(176));
+  ctx.lineTo(mrSpX, mrY - Y(236));
+  ctx.lineTo(mrSpX + X(17), mrY - Y(176));
+  ctx.closePath();
+  ctx.fill();
+
+  for (let c = 0; c < 6; c++) {
+    const wx = mrX + X(16) + c * X(40);
+    drawArchedWindow(wx, mrY + Y(22), X(24), Y(62), true);
+    drawArchedWindow(wx, mrY + Y(112), X(24), Y(58), true);
+    drawArchedWindow(wx, mrY + Y(196), X(24), Y(52), c % 2 === 0);
+  }
+  drawWreath(ctx, mrSpX, mrY + Y(214), X(18), theme.greenAccent, theme.redAccent, theme.goldAccent);
+}
+
+export function drawBrusselsAtomiumCutout(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  theme: CityTheme
+) {
+  const cx = w * 0.5;
+  const baseY = h - 18;
+
+  // Entrance Pavilion at base with glowing holiday arcade & snow skirt
+  ctx.fillStyle = '#475776';
+  ctx.fillRect(cx - 84, baseY - 56, 168, 56);
+  ctx.fillStyle = '#8fa4c2';
+  ctx.fillRect(cx - 92, baseY - 64, 184, 11);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(cx - 92, baseY - 68, 184, 6);
+  ctx.fillStyle = '#ffe594';
+  for (let i = -2; i <= 2; i++) {
+    ctx.fillRect(cx + i * 28 - 9, baseY - 44, 18, 34);
+  }
+  drawWreath(ctx, cx, baseY - 36, 15, theme.greenAccent, theme.redAccent, theme.goldAccent);
+
+  // Atomium 9 spheres oriented along vertical body diagonal
+  const coreY = h * 0.5;
+  const topY = 104;
+  const botY = baseY - 102;
+  const dxOuter = w * 0.285;
+  const dxMid = w * 0.18;
+  const sphereR = Math.min(w, h) * 0.086;
+
+  const nodes: Array<{ id: string; x: number; y: number; r: number }> = [
+    { id: 'bot', x: cx, y: botY, r: sphereR },
+    { id: 'top', x: cx, y: topY, r: sphereR * 1.04 },
+    { id: 'core', x: cx, y: coreY, r: sphereR * 1.02 },
+    { id: 'bl', x: cx - dxOuter, y: coreY + (botY - coreY) * 0.52, r: sphereR * 0.96 },
+    { id: 'br', x: cx + dxOuter, y: coreY + (botY - coreY) * 0.52, r: sphereR * 0.96 },
+    { id: 'bf', x: cx + dxMid * 0.25, y: coreY + (botY - coreY) * 0.72, r: sphereR * 0.9 },
+    { id: 'tl', x: cx - dxOuter, y: coreY - (coreY - topY) * 0.52, r: sphereR * 0.96 },
+    { id: 'tr', x: cx + dxOuter, y: coreY - (coreY - topY) * 0.52, r: sphereR * 0.96 },
+    { id: 'tf', x: cx - dxMid * 0.25, y: coreY - (coreY - topY) * 0.72, r: sphereR * 0.9 },
+  ];
+  const byId = Object.fromEntries(nodes.map((n) => [n.id, n]));
+
+  // Three ground steel tripod bipod stair pylons supporting the outer crystal spheres
+  ctx.strokeStyle = '#536785';
+  ctx.lineWidth = 13;
+  ctx.lineCap = 'round';
+  [
+    [byId.bl, cx - 56, baseY - 58],
+    [byId.br, cx + 56, baseY - 58],
+    [byId.bot, cx - 22, baseY - 52],
+    [byId.bot, cx + 22, baseY - 52],
+  ].forEach(([node, fx, fy]) => {
+    const n = node as { x: number; y: number };
+    ctx.beginPath();
+    ctx.moveTo(n.x, n.y);
+    ctx.lineTo(fx as number, fy as number);
+    ctx.stroke();
+  });
+
+  // 1. Metallic steel connecting tubes (edges + central vertical elevator shaft + radials)
+  const edges: Array<[string, string, number]> = [
+    ['bot', 'top', 18],
+    ['bot', 'bl', 14],
+    ['bot', 'br', 14],
+    ['bot', 'bf', 12],
+    ['top', 'tl', 14],
+    ['top', 'tr', 14],
+    ['top', 'tf', 12],
+    ['bl', 'tl', 14],
+    ['br', 'tr', 14],
+    ['bf', 'tf', 12],
+    ['bl', 'bf', 12],
+    ['br', 'bf', 12],
+    ['tl', 'tf', 12],
+    ['tr', 'tf', 12],
+    ['core', 'bl', 11],
+    ['core', 'br', 11],
+    ['core', 'tl', 11],
+    ['core', 'tr', 11],
+    ['core', 'bf', 11],
+    ['core', 'tf', 11],
+  ];
+
+  edges.forEach(([a, b, lw]) => {
+    const p0 = byId[a];
+    const p1 = byId[b];
+    ctx.strokeStyle = '#566987';
+    ctx.lineWidth = lw + 4;
+    ctx.beginPath();
+    ctx.moveTo(p0.x, p0.y);
+    ctx.lineTo(p1.x, p1.y);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#d3e1f2';
+    ctx.lineWidth = lw * 0.55;
+    ctx.beginPath();
+    ctx.moveTo(p0.x, p0.y);
+    ctx.lineTo(p1.x, p1.y);
+    ctx.stroke();
+  });
+
+  // Upper summit flagpole spire
+  ctx.fillStyle = theme.goldAccent;
+  ctx.fillRect(byId.top.x - 2.5, byId.top.y - byId.top.r - 24, 5, 26);
+  ctx.beginPath();
+  ctx.arc(byId.top.x, byId.top.y - byId.top.r - 26, 6.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 2. Crisp brushed-chrome 3D Atomium spheres with warm golden porthole lights & snow caps
+  const drawSphere = (n: { x: number; y: number; r: number }) => {
+    const grad = ctx.createRadialGradient(
+      n.x - n.r * 0.34,
+      n.y - n.r * 0.34,
+      n.r * 0.12,
+      n.x,
+      n.y,
+      n.r
+    );
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.32, '#dde8f6');
+    grad.addColorStop(0.75, '#8fa6c4');
+    grad.addColorStop(1, '#4c6180');
+
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Specular equatorial meridian arc & illuminated golden windows
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.ellipse(n.x, n.y, n.r * 0.88, n.r * 0.28, -0.18, 0, Math.PI);
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffe594';
+    [-0.5, 0, 0.5].forEach((off) => {
+      ctx.beginPath();
+      ctx.arc(n.x + off * n.r * 0.72, n.y + n.r * 0.08, n.r * 0.11, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Soft top winter snow frost
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.r * 0.98, Math.PI * 1.18, Math.PI * 1.82);
+    ctx.quadraticCurveTo(n.x, n.y - n.r * 0.58, n.x - n.r * 0.82, n.y - n.r * 0.52);
+    ctx.closePath();
+    ctx.fill();
+  };
+
+  ['bot', 'bl', 'br', 'tl', 'tr', 'core', 'bf', 'tf', 'top'].forEach((id) => {
+    drawSphere(byId[id]);
+  });
+}
+
+export function drawBrusselsGuildhallCutout(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  theme: CityTheme
+) {
+  const baseY = h - 18;
+  const sx = w / 520;
+  const sy = h / 580;
+  const X = (v: number) => v * sx;
+  const Y = (v: number) => v * sy;
+
+  // Trio of ornate Grand Place Baroque Guildhalls (sandstone gold, deep olive slate, warm Flemish rose)
+  const houses: Array<{
+    x: number;
+    w: number;
+    h: number;
+    wall: string;
+    trim: string;
+    gableStyle: 'bell' | 'step' | 'scroll';
+  }> = [
+    { x: 24, w: 148, h: 378, wall: '#d6c39c', trim: '#b49242', gableStyle: 'scroll' },
+    { x: 180, w: 162, h: 446, wall: '#4d605d', trim: theme.goldAccent, gableStyle: 'bell' },
+    { x: 350, w: 146, h: 392, wall: '#b85c54', trim: '#f2ca63', gableStyle: 'step' },
+  ];
+
+  houses.forEach((house) => {
+    const hx = X(house.x);
+    const hw = X(house.w);
+    const hy = baseY - Y(house.h);
+
+    ctx.fillStyle = house.wall;
+    ctx.fillRect(hx, hy + Y(96), hw, Y(house.h - 96));
+
+    // Ornate Flemish Baroque gable crown with gilded volutes & snow
+    const gMid = hx + hw * 0.5;
+    ctx.fillStyle = house.wall;
+    ctx.beginPath();
+    ctx.moveTo(hx, hy + Y(96));
+    if (house.gableStyle === 'bell') {
+      ctx.bezierCurveTo(hx, hy + Y(44), gMid - X(30), hy + Y(46), gMid - X(22), hy + Y(16));
+      ctx.quadraticCurveTo(gMid, hy - Y(4), gMid + X(22), hy + Y(16));
+      ctx.bezierCurveTo(gMid + X(30), hy + Y(46), hx + hw, hy + Y(44), hx + hw, hy + Y(96));
+    } else if (house.gableStyle === 'step') {
+      const steps = 4;
+      for (let s = 0; s < steps; s++) {
+        const sxOff = (s / steps) * (hw * 0.44);
+        const syOff = hy + Y(96) - (s + 1) * Y(20);
+        ctx.lineTo(hx + sxOff, syOff + Y(20));
+        ctx.lineTo(hx + sxOff, syOff);
+      }
+      ctx.lineTo(gMid, hy);
+      for (let s = steps - 1; s >= 0; s--) {
+        const sxOff = (s / steps) * (hw * 0.44);
+        const syOff = hy + Y(96) - (s + 1) * Y(20);
+        ctx.lineTo(hx + hw - sxOff, syOff);
+        ctx.lineTo(hx + hw - sxOff, syOff + Y(20));
+      }
+    } else {
+      ctx.quadraticCurveTo(hx + hw * 0.2, hy + Y(32), gMid, hy + Y(4));
+      ctx.quadraticCurveTo(hx + hw * 0.8, hy + Y(32), hx + hw, hy + Y(96));
+    }
+    ctx.closePath();
+    ctx.fill();
+
+    // Gold guildhall filigree border, spire globe, & pilasters
+    ctx.strokeStyle = house.trim;
+    ctx.lineWidth = Math.max(2, 3.8 * sx);
+    ctx.stroke();
+
+    ctx.fillStyle = house.trim;
+    ctx.beginPath();
+    ctx.arc(gMid, hy - Y(2), X(8), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(hx, hy + Y(94), hw, Y(6));
+    ctx.fillRect(hx + X(4), hy + Y(98), X(5), Y(house.h - 102));
+    ctx.fillRect(hx + hw - X(9), hy + Y(98), X(5), Y(house.h - 102));
+
+    // Glowing grid of Baroque guildhall windows + snow-capped window sills
+    for (let row = 0; row < 3; row++) {
+      const wy = hy + Y(118 + row * 82);
+      const cols = 3;
+      const cellW = (hw - X(38)) / cols;
+      for (let c = 0; c < cols; c++) {
+        const wx = hx + X(16) + c * (cellW + X(3));
+        ctx.fillStyle = '#ffe596';
+        ctx.fillRect(wx, wy, cellW - X(6), Y(48));
+        ctx.strokeStyle = house.trim;
+        ctx.lineWidth = Math.max(1, 1.8 * sx);
+        ctx.strokeRect(wx, wy, cellW - X(6), Y(48));
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(wx - X(2), wy + Y(47), cellW - X(2), Y(5));
+      }
+    }
+  });
+
+  drawWreath(ctx, X(261), baseY - Y(175), X(22), theme.greenAccent, theme.redAccent, theme.goldAccent);
+}
+
+export function drawBrusselsBeerAndFritesCutout(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  theme: CityTheme
+) {
+  const cx = w * 0.5;
+  const baseY = h - 18;
+
+  // Festive Belgian timber chalet booth with scalloped crimson & cream striped awning
+  ctx.fillStyle = '#5c3c28';
+  ctx.fillRect(cx - 146, baseY - 122, 292, 122);
+  ctx.fillStyle = '#3f281b';
+  ctx.fillRect(cx - 134, baseY - 196, 18, 92);
+  ctx.fillRect(cx + 116, baseY - 196, 18, 92);
+
+  // Dark slate backdrop inside open booth window + glowing strings
+  ctx.fillStyle = '#2d242a';
+  ctx.fillRect(cx - 116, baseY - 190, 232, 80);
+
+  // Scalloped red & cream Belgian market awning with snow roof cap
+  for (let i = 0; i < 8; i++) {
+    const ax = cx - 156 + i * 39;
+    ctx.fillStyle = i % 2 === 0 ? theme.redAccent : '#fbf6eb';
+    ctx.beginPath();
+    ctx.moveTo(ax, baseY - 244);
+    ctx.lineTo(ax + 39, baseY - 244);
+    ctx.lineTo(ax + 39, baseY - 196);
+    ctx.arc(ax + 19.5, baseY - 196, 19.5, 0, Math.PI);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.ellipse(cx, baseY - 246, 158, 12, 0, Math.PI, 0);
+  ctx.fill();
+
+  // Warm wooden counter top with snow dusting
+  ctx.fillStyle = '#9e6b43';
+  ctx.fillRect(cx - 152, baseY - 126, 304, 16);
+
+  // LEFT COUNTER PROP: Twin Golden Belgian Abbey Chalice Beers with frothy foam caps!
+  const drawBeerChalice = (bx: number, by: number, beerColor: string, scale = 1) => {
+    ctx.save();
+    ctx.translate(bx, by);
+    ctx.scale(scale, scale);
+    // Gold chalice base & stem
+    ctx.fillStyle = theme.goldAccent;
+    ctx.fillRect(-18, -6, 36, 6);
+    ctx.fillRect(-5, -24, 10, 20);
+    // Curved tulip beer glass filled with glowing golden/amber ale
+    ctx.fillStyle = beerColor;
+    ctx.beginPath();
+    ctx.moveTo(-16, -24);
+    ctx.quadraticCurveTo(-28, -54, -20, -76);
+    ctx.lineTo(20, -76);
+    ctx.quadraticCurveTo(28, -54, 16, -24);
+    ctx.closePath();
+    ctx.fill();
+    // Gold rim accent & bubbly foam overflow
+    ctx.strokeStyle = theme.goldAccent;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.fillStyle = '#fffef9';
+    ctx.beginPath();
+    ctx.arc(-12, -77, 10, 0, Math.PI * 2);
+    ctx.arc(0, -82, 13, 0, Math.PI * 2);
+    ctx.arc(13, -76, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  };
+
+  drawBeerChalice(cx - 72, baseY - 126, '#e6a52c', 1.0);
+  drawBeerChalice(cx - 22, baseY - 126, '#b85c24', 0.88);
+
+  // RIGHT COUNTER PROP: Classic striped paper cone of golden Belgian Frites!
+  const drawFritesCone = (fx: number, fy: number) => {
+    ctx.save();
+    ctx.translate(fx, fy);
+    // Golden hand-cut frites sticking fan-shaped out of cone top
+    ctx.fillStyle = '#f5c742';
+    [
+      [-18, -82, -0.24],
+      [-10, -90, -0.12],
+      [-2, -94, -0.02],
+      [7, -92, 0.1],
+      [15, -84, 0.22],
+    ].forEach(([xOff, yTop, ang]) => {
+      ctx.save();
+      ctx.translate(xOff, -54);
+      ctx.rotate(ang);
+      ctx.fillRect(-4.5, yTop + 54, 9, 44);
+      ctx.fillStyle = '#df9a26';
+      ctx.fillRect(-4.5, yTop + 54, 2.5, 44);
+      ctx.restore();
+      ctx.fillStyle = '#f5c742';
+    });
+    // Creamy Belgian mayo swirl on top
+    ctx.fillStyle = '#fff5cf';
+    ctx.beginPath();
+    ctx.arc(-4, -84, 8, 0, Math.PI * 2);
+    ctx.arc(4, -82, 7, 0, Math.PI * 2);
+    ctx.fill();
+    // Striped paper cornet cone
+    ctx.fillStyle = '#fbf6eb';
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(-26, -64);
+    ctx.lineTo(26, -64);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = theme.redAccent;
+    ctx.beginPath();
+    ctx.moveTo(-6, -15);
+    ctx.lineTo(-20, -48);
+    ctx.lineTo(-8, -48);
+    ctx.lineTo(0, -15);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(4, -15);
+    ctx.lineTo(8, -48);
+    ctx.lineTo(20, -48);
+    ctx.lineTo(9, -15);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  };
+
+  drawFritesCone(cx + 52, baseY - 126);
+  drawFritesCone(cx + 100, baseY - 126);
+
+  // Brass placard centered on booth apron
+  ctx.fillStyle = theme.goldAccent;
+  ctx.fillRect(cx - 88, baseY - 94, 176, 44);
+  ctx.fillStyle = '#2d221c';
+  ctx.fillRect(cx - 82, baseY - 88, 164, 32);
+  ctx.fillStyle = '#fff6dc';
+  ctx.font = '700 20px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('BIÈRE · FRITES', cx, baseY - 65);
+}
+
+export function drawBrusselsWaffleStandCutout(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  theme: CityTheme
+) {
+  const cx = w * 0.5;
+  const baseY = h - 18;
+
+  // Evergreen timber winter waffle chalet with gold trim
+  ctx.fillStyle = theme.greenAccent;
+  ctx.fillRect(cx - 142, baseY - 122, 284, 122);
+  ctx.fillStyle = '#184b2f';
+  ctx.fillRect(cx - 130, baseY - 194, 18, 86);
+  ctx.fillRect(cx + 112, baseY - 194, 18, 86);
+
+  ctx.fillStyle = '#332520';
+  ctx.fillRect(cx - 112, baseY - 188, 224, 78);
+
+  // Candy green & cream striped scalloped awning topped by snow
+  for (let i = 0; i < 8; i++) {
+    const ax = cx - 152 + i * 38;
+    ctx.fillStyle = i % 2 === 0 ? theme.greenAccent : '#fbf6eb';
+    ctx.beginPath();
+    ctx.moveTo(ax, baseY - 242);
+    ctx.lineTo(ax + 38, baseY - 242);
+    ctx.lineTo(ax + 38, baseY - 194);
+    ctx.arc(ax + 19, baseY - 194, 19, 0, Math.PI);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.ellipse(cx, baseY - 244, 154, 12, 0, Math.PI, 0);
+  ctx.fill();
+
+  ctx.fillStyle = '#b47d4e';
+  ctx.fillRect(cx - 148, baseY - 126, 296, 15);
+
+  // Stacked rectangular golden Brussels Waffles on display platter with powdered sugar & berries!
+  const drawBrusselsWaffle = (wx: number, wy: number, tilt: number, chocolate = false) => {
+    ctx.save();
+    ctx.translate(wx, wy);
+    ctx.rotate(tilt);
+    ctx.fillStyle = '#e5a343';
+    ctx.fillRect(-38, -28, 76, 54);
+    ctx.strokeStyle = '#b97422';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(-38, -28, 76, 54);
+
+    // Classic 4x3 Brussels waffle pockets
+    ctx.fillStyle = '#b97422';
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 4; c++) {
+        ctx.fillRect(-31 + c * 17, -21 + r * 15, 11, 10);
+      }
+    }
+    if (chocolate) {
+      // Glossy melted Belgian dark chocolate ribbon drizzle
+      ctx.fillStyle = '#472518';
+      ctx.fillRect(-34, -26, 68, 16);
+      ctx.beginPath();
+      ctx.arc(-18, -10, 6, 0, Math.PI);
+      ctx.arc(4, -8, 8, 0, Math.PI);
+      ctx.arc(22, -10, 6, 0, Math.PI);
+      ctx.fill();
+    }
+    // Whipped cream rosette & festive red strawberries + sugar snow
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(-8, -28, 9, 0, Math.PI * 2);
+    ctx.arc(10, -28, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = theme.redAccent;
+    ctx.beginPath();
+    ctx.arc(1, -34, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  };
+
+  drawBrusselsWaffle(cx - 56, baseY - 154, -0.08, false);
+  drawBrusselsWaffle(cx + 46, baseY - 154, 0.08, true);
+
+  ctx.fillStyle = theme.goldAccent;
+  ctx.fillRect(cx - 78, baseY - 94, 156, 44);
+  ctx.fillStyle = theme.redAccent;
+  ctx.fillRect(cx - 72, baseY - 88, 144, 32);
+  ctx.fillStyle = '#fff9eb';
+  ctx.font = '700 21px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('GAUFRES', cx, baseY - 64);
+}
+
+export function drawBrusselsFrontBeerAndFriesProp(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  theme: CityTheme
+) {
+  const cx = w * 0.5;
+  // Warm walnut timber serving board anchoring the beer goblet & frites cone cleanly on pale snow
+  ctx.fillStyle = '#5c3c28';
+  ctx.beginPath();
+  ctx.roundRect(cx - 86, h - 34, 172, 18, 8);
+  ctx.fill();
+  ctx.fillStyle = '#7c5238';
+  ctx.beginPath();
+  ctx.roundRect(cx - 82, h - 37, 164, 9, 5);
+  ctx.fill();
+
+  // Left: Frothy Belgian amber-gold Tripel chalice with crisp bronze outline & white foam dome
+  const gx = cx - 36;
+  const gy = h - 34;
+  ctx.fillStyle = '#bd882c';
+  ctx.fillRect(gx - 22, gy - 9, 44, 9);
+  ctx.fillRect(gx - 6, gy - 36, 12, 29);
+
+  ctx.fillStyle = '#d9841c';
+  ctx.strokeStyle = '#6b3e12';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(gx - 20, gy - 36);
+  ctx.quadraticCurveTo(gx - 35, gy - 78, gx - 25, gy - 114);
+  ctx.lineTo(gx + 25, gy - 114);
+  ctx.quadraticCurveTo(gx + 35, gy - 78, gx + 20, gy - 36);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Bright amber highlight band inside glass
+  ctx.fillStyle = '#f2b838';
+  ctx.beginPath();
+  ctx.moveTo(gx - 12, gy - 44);
+  ctx.quadraticCurveTo(gx - 20, gy - 78, gx - 14, gy - 108);
+  ctx.lineTo(gx - 3, gy - 108);
+  ctx.lineTo(gx - 4, gy - 44);
+  ctx.closePath();
+  ctx.fill();
+
+  // Crisp fluffy white beer foam head framed delicately against white cutout edge
+  ctx.fillStyle = '#e8dfd0';
+  ctx.beginPath();
+  ctx.arc(gx - 14, gy - 116, 13, 0, Math.PI * 2);
+  ctx.arc(gx, gy - 123, 16, 0, Math.PI * 2);
+  ctx.arc(gx + 14, gy - 116, 13, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(gx - 12, gy - 117, 10, 0, Math.PI * 2);
+  ctx.arc(gx, gy - 124, 13, 0, Math.PI * 2);
+  ctx.arc(gx + 12, gy - 117, 10, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Right: Red-and-ivory striped Belgian frites cone brimming with crisp golden fries & dark shadows
+  const fx = cx + 40;
+  const fy = h - 34;
+  [
+    [-18, -108],
+    [-8, -120],
+    [2, -125],
+    [12, -118],
+    [21, -106],
+  ].forEach(([ox, oy], idx) => {
+    ctx.fillStyle = idx % 2 === 0 ? '#eab032' : '#cf881f';
+    ctx.fillRect(fx + ox - 4.5, fy + oy, 9, 54);
+    ctx.strokeStyle = '#7d4d12';
+    ctx.lineWidth = 1.6;
+    ctx.strokeRect(fx + ox - 4.5, fy + oy, 9, 54);
+  });
+
+  ctx.fillStyle = theme.redAccent;
+  ctx.beginPath();
+  ctx.moveTo(fx, fy);
+  ctx.lineTo(fx - 30, fy - 78);
+  ctx.lineTo(fx + 30, fy - 78);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#fbf6eb';
+  ctx.beginPath();
+  ctx.moveTo(fx - 4, fy - 14);
+  ctx.lineTo(fx - 15, fy - 74);
+  ctx.lineTo(fx - 4, fy - 74);
+  ctx.lineTo(fx - 1, fy - 14);
+  ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(fx + 5, fy - 14);
+  ctx.lineTo(fx + 6, fy - 74);
+  ctx.lineTo(fx + 17, fy - 74);
+  ctx.lineTo(fx + 7, fy - 14);
+  ctx.closePath();
+  ctx.fill();
+}
+
+export function drawBrusselsFrontWaffleProp(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  theme: CityTheme
+) {
+  const cx = w * 0.5;
+  // Dark ceramic festive platter sitting cleanly on pale floor
+  ctx.fillStyle = '#334257';
+  ctx.beginPath();
+  ctx.ellipse(cx, h - 24, 92, 16, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#e7dfd0';
+  ctx.beginPath();
+  ctx.ellipse(cx, h - 28, 76, 11, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Rich golden double-stacked Belgian grid waffles with chocolate glaze, berries & holly
+  ctx.fillStyle = '#cf8527';
+  ctx.fillRect(cx - 56, h - 56, 112, 26);
+  ctx.strokeStyle = '#6b3e12';
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(cx - 56, h - 56, 112, 26);
+
+  ctx.fillStyle = '#e5a33b';
+  ctx.fillRect(cx - 50, h - 98, 100, 50);
+  ctx.strokeStyle = '#6b3e12';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(cx - 50, h - 98, 100, 50);
+
+  ctx.fillStyle = '#995716';
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 4; c++) {
+      ctx.fillRect(cx - 41 + c * 22, h - 90 + r * 14, 15, 9);
+    }
+  }
+  // Glossy dark Belgian chocolate sauce drip
+  ctx.fillStyle = '#472518';
+  ctx.fillRect(cx - 46, h - 96, 92, 18);
+  ctx.beginPath();
+  ctx.arc(cx - 24, h - 78, 7, 0, Math.PI);
+  ctx.arc(cx, h - 76, 8, 0, Math.PI);
+  ctx.arc(cx + 24, h - 78, 7, 0, Math.PI);
+  ctx.fill();
+
+  // Whipped cream cloud & bright strawberries + holly leaves
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(cx - 12, h - 101, 13, 0, Math.PI * 2);
+  ctx.arc(cx + 12, h - 101, 12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = theme.redAccent;
+  ctx.beginPath();
+  ctx.arc(cx, h - 113, 12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = theme.greenAccent;
+  ctx.beginPath();
+  ctx.ellipse(cx + 58, h - 40, 16, 8, -0.3, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+export function drawBrusselsSpottedCatCutout(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  theme: CityTheme
+) {
+  void theme;
+  const sx = w / 320;
+  const sy = h / 380;
+  const X = (v: number) => v * sx;
+  const Y = (v: number) => v * sy;
+
+  // 1. Tall skyward-curving slender S-tail rising high on left rear (matching reference pose!)
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#181a20';
+  ctx.lineWidth = X(24);
+  ctx.beginPath();
+  ctx.moveTo(X(104), Y(222));
+  ctx.bezierCurveTo(X(102), Y(156), X(98), Y(108), X(68), Y(62));
+  ctx.stroke();
+
+  ctx.strokeStyle = '#faf7f2';
+  ctx.lineWidth = X(17.5);
+  ctx.beginPath();
+  ctx.moveTo(X(104), Y(222));
+  ctx.bezierCurveTo(X(102), Y(156), X(98), Y(108), X(68), Y(62));
+  ctx.stroke();
+
+  // Crisp ink-black spots & tip along tall upright tail
+  ctx.fillStyle = '#15171c';
+  ctx.beginPath();
+  ctx.arc(X(68), Y(62), X(10.5), 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(X(96), Y(138), X(9.5), Y(13), 0.15, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 2. Fluffy hunched pear-shaped body with close-set front paws (from reference!)
+  const bodyPath = new Path2D();
+  bodyPath.moveTo(X(148), Y(354)); // left paw base
+  bodyPath.bezierCurveTo(X(118), Y(348), X(86), Y(302), X(86), Y(252)); // plump left hip
+  bodyPath.bezierCurveTo(X(86), Y(202), X(124), Y(178), X(166), Y(190)); // high hunched back arch
+  bodyPath.quadraticCurveTo(X(176), Y(192), X(180), Y(178)); // nape into left ear base
+  // Left pointed triangular ear
+  bodyPath.lineTo(X(194), Y(136));
+  bodyPath.lineTo(X(212), Y(172));
+  // Small bridge between close-set upright ears
+  bodyPath.lineTo(X(218), Y(172));
+  // Right pointed triangular ear
+  bodyPath.lineTo(X(238), Y(132));
+  bodyPath.lineTo(X(248), Y(178));
+  // Cheek & plush pear right belly tapering to right paw
+  bodyPath.bezierCurveTo(X(260), Y(214), X(256), Y(278), X(230), Y(322));
+  bodyPath.quadraticCurveTo(X(218), Y(344), X(206), Y(354)); // right paw base
+  // Cute tucked V-cleft between close front legs
+  bodyPath.quadraticCurveTo(X(186), Y(354), X(182), Y(314));
+  bodyPath.quadraticCurveTo(X(176), Y(306), X(170), Y(314));
+  bodyPath.quadraticCurveTo(X(166), Y(354), X(148), Y(354));
+  bodyPath.closePath();
+
+  // Soft ivory-white base fill clipped for crisp cow-cat ink-black spots
+  ctx.fillStyle = '#faf7f2';
+  ctx.fill(bodyPath);
+
+  ctx.save();
+  ctx.clip(bodyPath);
+  ctx.fillStyle = '#15171c';
+  // Left ear black patch draping slightly across brow
+  ctx.beginPath();
+  ctx.ellipse(X(194), Y(154), X(24), Y(24), -0.25, 0, Math.PI * 2);
+  ctx.fill();
+  // Iconic broad ink-black cow spot arching over hunched left back
+  ctx.beginPath();
+  ctx.ellipse(X(126), Y(228), X(40), Y(34), -0.35, 0, Math.PI * 2);
+  ctx.fill();
+  // Bold organic cow patch on lower right belly/flank
+  ctx.beginPath();
+  ctx.ellipse(X(226), Y(272), X(28), Y(34), 0.22, 0, Math.PI * 2);
+  ctx.fill();
+  // Playful lower left paw spot
+  ctx.beginPath();
+  ctx.ellipse(X(132), Y(316), X(19), Y(24), 0.14, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Clean charcoal outer fur contour + subtle sketchy ink bristle fuzz
+  ctx.strokeStyle = '#181a20';
+  ctx.lineWidth = X(3.6);
+  ctx.stroke(bodyPath);
+
+  // Soft pastel-pink inner ear triangles matching reference illustration
+  ctx.fillStyle = '#f7c5d3';
+  ctx.beginPath();
+  ctx.moveTo(X(186), Y(168));
+  ctx.lineTo(X(194), Y(144));
+  ctx.lineTo(X(206), Y(168));
+  ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(X(224), Y(168));
+  ctx.lineTo(X(237), Y(140));
+  ctx.lineTo(X(244), Y(168));
+  ctx.closePath();
+  ctx.fill();
+
+  // 3. Tall expressive vertical-oval luminous GREEN eyes (no nose, no mouth, just saucer charm!)
+  const drawSaucerEye = (ex: number, ey: number, tilt: number) => {
+    ctx.save();
+    ctx.translate(ex, ey);
+    ctx.rotate(tilt);
+
+    // Crisp ink rim
+    ctx.fillStyle = '#15171c';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, X(10.5), Y(14.5), 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Luminous light pistachio-mint green iris gradient
+    const irisGrad = ctx.createRadialGradient(0, Y(-2), X(1.5), 0, 0, Y(13));
+    irisGrad.addColorStop(0, '#f2ffe6');
+    irisGrad.addColorStop(0.55, '#c6f89f');
+    irisGrad.addColorStop(1, '#98e072');
+    ctx.fillStyle = irisGrad;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, X(8.6), Y(12.4), 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Upright delicate feline pupil + bright highlight speck
+    ctx.fillStyle = '#14171c';
+    ctx.beginPath();
+    ctx.ellipse(X(0.4), 0, X(2.4), Y(5.8), 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(X(-2.4), Y(-4.2), X(2.1), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  };
+
+  drawSaucerEye(X(196), Y(198), -0.14);
+  drawSaucerEye(X(226), Y(201), 0.08);
+
+  // 4. Three short perky whiskers fanning neatly from left brow & right cheek
+  ctx.strokeStyle = '#181a20';
+  ctx.lineWidth = X(2.1);
+  // Left cheek/temple whiskers
+  [
+    [176, 184, 158, 174],
+    [175, 190, 154, 186],
+    [175, 196, 156, 198],
+  ].forEach(([x0, y0, x1, y1]) => {
+    ctx.beginPath();
+    ctx.moveTo(X(x0), Y(y0));
+    ctx.lineTo(X(x1), Y(y1));
+    ctx.stroke();
+  });
+  // Right outer cheek whiskers
+  [
+    [248, 200, 269, 192],
+    [250, 208, 272, 207],
+    [249, 215, 270, 221],
+  ].forEach(([x0, y0, x1, y1]) => {
+    ctx.beginPath();
+    ctx.moveTo(X(x0), Y(y0));
+    ctx.lineTo(X(x1), Y(y1));
+    ctx.stroke();
+  });
+}

@@ -1,6 +1,6 @@
 import type { CityId, CityTheme } from '../types/card';
 
-export const CITY_ORDER: CityId[] = ['toronto', 'seoul', 'vancouver'];
+export const CITY_ORDER: CityId[] = ['toronto', 'seoul', 'vancouver', 'brussels'];
 
 export const CITY_THEMES: Record<CityId, CityTheme> = {
   toronto: {
@@ -74,5 +74,29 @@ export const CITY_THEMES: Record<CityId, CityTheme> = {
     goldShadow: '#bd882c',
     uiInkColor: '#1f3b38',
     uiHalo: '#fbf7ee',
+  },
+  brussels: {
+    id: 'brussels',
+    name: 'Brussels',
+    localLabel: 'Brussels, BE',
+    tagline: 'Gilded Grand Place gables, Atomium stars, Belgian waffles, beer & frites',
+    cardWish: 'Warm golden wishes from Brussels',
+    // Champagne gold outer winter sky framing twilight indigo card interior
+    skyTop: '#cbb799',
+    skyMid: '#eedec5',
+    skyBottom: '#fdf8ef',
+    cardPaper: '#fcfaf4',
+    cardPaperShadow: '#e2dacb',
+    cardDeckTint: '#f7f0e4',
+    wallSkyTop: '#1e294c',
+    wallSkyBottom: '#596d9e',
+    redAccent: '#d4333d',
+    redShadow: '#9e232e',
+    greenAccent: '#216e45',
+    greenShadow: '#164d30',
+    goldAccent: '#ecc04c',
+    goldShadow: '#bd882c',
+    uiInkColor: '#29263d',
+    uiHalo: '#fcf8ef',
   },
 };

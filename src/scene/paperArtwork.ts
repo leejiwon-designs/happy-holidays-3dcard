@@ -213,8 +213,22 @@ export function createDeckPaperTexture(cityId: CityId, recipientName: string): T
   ctx.clip();
 
   // Soft layered painted watercolor snowbanks framing all corners & sides of the card floor
-  const bankWash = cityId === 'seoul' ? '#ede1d6' : cityId === 'vancouver' ? '#d9ebe6' : '#dfe9f5';
-  const bankMid = cityId === 'seoul' ? '#f6eee6' : cityId === 'vancouver' ? '#edf6f4' : '#eef5fc';
+  const bankWash =
+    cityId === 'seoul'
+      ? '#ede1d6'
+      : cityId === 'vancouver'
+        ? '#d9ebe6'
+        : cityId === 'brussels'
+          ? '#efe3cf'
+          : '#dfe9f5';
+  const bankMid =
+    cityId === 'seoul'
+      ? '#f6eee6'
+      : cityId === 'vancouver'
+        ? '#edf6f4'
+        : cityId === 'brussels'
+          ? '#f8f1e4'
+          : '#eef5fc';
   ctx.save();
   const drawSnowMound = (mx: number, my: number, rx: number, ry: number, rot: number, fill: string, alpha: number) => {
     ctx.globalAlpha = alpha;
@@ -287,7 +301,7 @@ export function createDeckPaperTexture(cityId: CityId, recipientName: string): T
       ctx.ellipse(sx, sy, 16, 9, -0.3, 0, Math.PI * 2);
       ctx.fill();
     });
-  } else {
+  } else if (cityId === 'vancouver') {
     ctx.fillStyle = '#c4e3e0';
     ctx.beginPath();
     ctx.moveTo(60, 310);
@@ -302,6 +316,28 @@ export function createDeckPaperTexture(cityId: CityId, recipientName: string): T
     [[145, 368], [185, 380], [820, 365], [860, 378]].forEach(([rx, ry]) => {
       ctx.beginPath();
       ctx.ellipse(rx, ry, 10, 6, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  } else {
+    // Brussels Grand Place radial cobblestone granite fan arcs framing the tree plaza
+    const cx = 512;
+    const cy = (1.56 / 4.2) * 768;
+    ctx.strokeStyle = '#c9bda8';
+    ctx.lineWidth = 3.2;
+    [135, 185, 235, 285].forEach((r, idx) => {
+      ctx.save();
+      ctx.setLineDash(idx % 2 === 0 ? [18, 12] : [12, 10]);
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, r * 1.15, r * 0.68, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    // Warm Belgian granite plaza paving stones flanking the festive stands
+    ctx.fillStyle = '#d8cdb8';
+    [[165, 452], [202, 468], [822, 452], [858, 468]].forEach(([px, py]) => {
+      ctx.beginPath();
+      ctx.ellipse(px, py, 14, 7, 0.12, 0, Math.PI * 2);
       ctx.fill();
     });
   }
@@ -460,7 +496,7 @@ export function createBackWallPaperTexture(cityId: CityId): THREE.CanvasTexture 
     drawFourPointStar(ctx, sx, sy, 8 + (s % 3) * 2.5, theme.goldAccent);
   }
 
-  const darkSkyLights = cityId === 'vancouver' || cityId === 'seoul';
+  const darkSkyLights = cityId === 'vancouver' || cityId === 'seoul' || cityId === 'brussels';
   ctx.strokeStyle = darkSkyLights ? theme.goldAccent : theme.greenAccent;
   ctx.lineWidth = darkSkyLights ? 4.5 : 4;
   ctx.beginPath();

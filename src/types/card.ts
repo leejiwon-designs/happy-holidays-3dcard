@@ -1,4 +1,4 @@
-export type CityId = 'toronto' | 'seoul' | 'vancouver';
+export type CityId = 'toronto' | 'seoul' | 'vancouver' | 'brussels';
 
 export type OrnamentId =
   | 'espresso-martini'

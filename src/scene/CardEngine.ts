@@ -1127,4 +1127,6 @@ export class CardEngine {
   }
 }
 
-(import.meta as unknown as { hot?: { decline: () => void } }).hot?.decline();
+(import.meta as unknown as { hot?: { accept: (cb: () => void) => void } }).hot?.accept(() => {
+  window.location.reload();
+});
